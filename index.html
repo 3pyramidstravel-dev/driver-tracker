@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three Pyramids Travel - نظام التشغيل</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1410 50%, #0a0a0a 100%);
+    color: #f5e6c8;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #1c1710 0%, #14100a 100%);
+    border: 1px solid #b8860b;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 0 40px rgba(184, 134, 11, 0.15);
+  }
+  .header {
+    text-align: center;
+    border-bottom: 2px solid #b8860b;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+  }
+  .header h1 {
+    color: #d4af37;
+    font-size: 28px;
+    margin: 10px 0 5px;
+    letter-spacing: 1px;
+  }
+  .header .sub {
+    color: #a89060;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .header .form-title {
+    color: #f5e6c8;
+    font-size: 20px;
+    margin-top: 15px;
+    background: linear-gradient(90deg, transparent, #b8860b33, transparent);
+    padding: 8px;
+    border-radius: 6px;
+  }
+  .fixed-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+    background: #0d0a06;
+    border: 1px solid #4a3a1f;
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .fixed-info.two-col { grid-template-columns: 1fr 1fr; }
+  .fixed-info.one-col { grid-template-columns: 1fr; }
+  .car-fixed-label {
+    background: #1a1410;
+    border: 1px solid #6b5730;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #d4af37;
+    text-align: center;
+  }
+  .field-group { display: flex; flex-direction: column; }
+  label {
+    color: #d4af37;
+    font-size: 13px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input, textarea, select {
+    background: #1a1410;
+    border: 1px solid #6b5730;
+    color: #f5e6c8;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  select { cursor: pointer; }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+  }
+  .trips-section { margin-top: 20px; }
+  .trips-section h2 {
+    color: #d4af37;
+    font-size: 18px;
+    border-right: 3px solid #d4af37;
+    padding-right: 10px;
+    margin-bottom: 15px;
+  }
+  .trip-card {
+    background: #0d0a06;
+    border: 1px solid #4a3a1f;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .trip-card .trip-number {
+    position: absolute;
+    top: -12px;
+    right: 15px;
+    background: linear-gradient(135deg, #d4af37, #8a6c1f);
+    color: #1a1410;
+    font-weight: bold;
+    padding: 3px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+  .trip-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .trip-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  textarea.autogrow {
+    width: 100%;
+    min-height: 90px;
+    resize: none;
+    overflow: hidden;
+    line-height: 1.6;
+  }
+  .photo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .photo-box {
+    background: #1a1410;
+    border: 1px dashed #6b5730;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .photo-box label { display: block; margin-bottom: 8px; }
+  .photo-box input[type=file] { color: #a89060; font-size: 12px; width: 100%; }
+  .photo-preview {
+    max-width: 100%;
+    max-height: 100px;
+    margin-top: 8px;
+    border-radius: 6px;
+    display: none;
+  }
+  .remove-trip {
+    background: #3a1414;
+    color: #e8a0a0;
+    border: 1px solid #6b2b2b;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .remove-trip:hover { background: #4a1a1a; }
+  .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-add { background: transparent; border: 1px solid #d4af37; color: #d4af37; }
+  .btn-send {
+    background: linear-gradient(135deg, #d4af37, #8a6c1f);
+    color: #1a1410;
+    font-size: 16px;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid #6b5730;
+    color: #a89060;
+  }
+  .footer-note {
+    text-align: center;
+    color: #6b5730;
+    font-size: 12px;
+    margin-top: 25px;
+    border-top: 1px solid #3a2f18;
+    padding-top: 15px;
+  }
+  @media (max-width: 600px) {
+    .fixed-info, .fixed-info.two-col { grid-template-columns: 1fr; }
+    .trip-grid, .trip-grid.three, .photo-row { grid-template-columns: 1fr; }
+    .container { padding: 18px; }
+    .role-buttons { grid-template-columns: 1fr; }
+  }
+
+  /* ==== Gate screens ==== */
+  .gate-screen {
+    max-width: 460px;
+    margin: 60px auto;
+    background: linear-gradient(180deg, #1c1710 0%, #14100a 100%);
+    border: 1px solid #b8860b;
+    border-radius: 12px;
+    padding: 35px 25px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(184, 134, 11, 0.15);
+  }
+  .gate-screen .brand-sub { color:#a89060; letter-spacing:2px; font-size:13px; margin-bottom: 6px; }
+  .gate-screen .brand-title { color:#d4af37; font-size: 24px; font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; }
+  .gate-screen h2 { color: #d4af37; font-size: 19px; margin: 15px 0 22px; }
+  .gate-screen input {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+  }
+  .gate-screen .btn-send { width: 100%; }
+  .gate-error {
+    color: #e8a0a0;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+  .role-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  .role-btn {
+    background: #0d0a06;
+    border: 1px solid #6b5730;
+    color: #f5e6c8;
+    border-radius: 10px;
+    padding: 22px 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  .role-btn:hover {
+    border-color: #d4af37;
+    background: #1a1410;
+    transform: translateY(-2px);
+  }
+  .role-btn .icon { font-size: 26px; display: block; margin-bottom: 10px; }
+  .custody-chip {
+    display: inline-block;
+    background: #1a4a2e;
+    border: 1px solid #27ae60;
+    border-radius: 12px;
+    padding: 3px 12px;
+    font-size: 12px;
+    color: #2ecc71;
+    margin-top: 6px;
+    font-weight: bold;
+  }
+  .back-link {
+    display: inline-block;
+    color: #a89060;
+    font-size: 13px;
+    margin-top: 15px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .page-badge-manager {
+    background: linear-gradient(135deg, #d4af37, #8a6c1f);
+    color: #1a1410;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 17px;
+    display: block;
+    text-align: center;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+  .trip-divider {
+    text-align: center;
+    color: #6b5730;
+    font-size: 12px;
+    margin: 18px 0;
+    letter-spacing: 3px;
+  }
+  .time-banner {
+    background: linear-gradient(135deg, #d4af37, #8a6c1f);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .time-banner-label {
+    color: #1a1410;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .time-banner-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .time-banner-row select,
+  .time-banner-row input {
+    background: #1a1410;
+    color: #f5e6c8;
+    border: 1px solid #14100a;
+    max-width: 160px;
+  }
+
+  /* ==== Fuel balance & salary screens ==== */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: #0d0a06;
+    border: 1px solid #4a3a1f;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-box .stat-label { color: #a89060; font-size: 13px; margin-bottom: 8px; }
+  .stat-box .stat-value { color: #d4af37; font-size: 20px; font-weight: bold; }
+  .manager-editable-number { cursor: pointer; position: relative; transition: all .15s ease; }
+  .manager-editable-number:hover { filter: brightness(1.18); transform: scale(1.02); text-decoration: underline; }
+  .manager-editable-number::after { content:'🔐 اضغط للتعديل'; display:block; color:#8f7a52; font-size:10px; margin-top:5px; font-weight:normal; text-decoration:none; }
+  .stat-box.net {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #1c1710, #0d0a06);
+    border: 1px solid #d4af37;
+  }
+  .stat-box.net .stat-value { color: #f5e6c8; font-size: 26px; }
+
+  .balance-display {
+    text-align: center;
+    padding: 25px;
+    background: #0d0a06;
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  .balance-display .balance-label { color: #a89060; font-size: 14px; margin-bottom: 8px; }
+  .balance-display .balance-value { color: #d4af37; font-size: 34px; font-weight: bold; }
+
+  .warning-banner {
+    background: repeating-linear-gradient(45deg, #c81e1e, #c81e1e 14px, #f5c400 14px, #f5c400 28px);
+    color: #1a1410;
+    font-weight: bold;
+    text-align: center;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+    animation: pulseWarn 1.2s infinite;
+  }
+  @keyframes pulseWarn { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  .history-list { margin-top: 15px; }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    background: #0d0a06;
+    border: 1px solid #4a3a1f;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    gap: 10px;
+  }
+  .history-item .h-amount.positive { color: #8ed08e; white-space: nowrap; }
+  .history-item .h-amount.negative { color: #e8a0a0; white-space: nowrap; }
+
+  .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .sub-nav button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #6b5730;
+    background: transparent;
+    color: #a89060;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  .sub-nav button.active {
+    background: linear-gradient(135deg, #d4af37, #8a6c1f);
+    color: #1a1410;
+    border-color: #d4af37;
+  }
+  /* ── زرارات صباحاً/مساءً ── */
+  .period-btns { display:flex; gap:8px; justify-content:center; margin-bottom:8px; }
+  .period-btn {
+    flex:1; padding:11px 10px; border-radius:8px;
+    border:2px solid #2a2a2a; background:#1a1410;
+    color:#a89060; font-size:15px; font-weight:bold;
+    cursor:pointer; transition:all 0.2s; max-width:140px;
+  }
+  .period-btn.p-sabah  { background:#1a4a2e; border-color:#27ae60; color:#7dcea0; }
+  .period-btn.p-masaa  { background:#1a2a4a; border-color:#2980b9; color:#7fb3d3; }
+
+  /* ===== Manager Edit Code Modal ===== */
+  #managerEditModal { position:fixed; inset:0; background:rgba(0,0,0,.72); display:none; align-items:center; justify-content:center; z-index:99999; padding:20px; }
+  #managerEditModal .manager-modal-box { width:min(420px,95vw); background:#17120e; border:1px solid #d4af37; border-radius:14px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.55); text-align:center; }
+  #managerEditModal h3 { margin:0 0 12px; color:#d4af37; }
+  #managerEditModal p { color:#d7c8a5; margin:0 0 14px; }
+  #managerEditCodeInput { width:100%; box-sizing:border-box; padding:13px; border:1px solid #8a6c1f; border-radius:8px; background:#0f0c09; color:#fff; font-size:18px; text-align:center; outline:none; }
+  #managerEditModal .manager-modal-actions { display:flex; gap:10px; margin-top:15px; }
+  #managerEditModal button { flex:1; padding:11px; border-radius:8px; cursor:pointer; font-weight:bold; }
+  #managerEditConfirmBtn { border:1px solid #d4af37; background:#d4af37; color:#17120e; }
+  #managerEditCancelBtn { border:1px solid #6b5730; background:transparent; color:#d7c8a5; }
+  #managerEditError { display:none; color:#ff8f8f; font-size:13px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<!-- ============ ROLE SELECTION GATE ============ -->
+<div class="gate-screen" id="roleGate">
+  <div class="brand-sub">CORPORATE & HOSPITALITY LOGISTICS</div>
+  <div class="brand-title">THREE PYRAMIDS TRAVEL</div>
+  <h2>اختر الشاشة المطلوبة</h2>
+  <div class="role-buttons">
+    <button class="role-btn" onclick="goToCarSelect()">
+      <span class="icon">🚗</span>
+      أمر تشغيل الكابتن
+    </button>
+    <button class="role-btn" onclick="openManagerCodeGate()">
+      <span class="icon">📋</span>
+      شاشة مدير التشغيل
+    </button>
+  </div>
+</div>
+
+<!-- ============ CAR SELECTION (captain only) ============ -->
+<div class="gate-screen" id="carSelectGate" style="display:none;">
+  <div class="brand-sub">THREE PYRAMIDS TRAVEL</div>
+  <h2>اختر العربية</h2>
+  <div class="role-buttons" id="carButtonsContainer"></div>
+  <div class="back-link" onclick="backToRoleGate()">رجوع لاختيار الشاشة</div>
+</div>
+
+<!-- ============ ACCESS CODE GATE (shared) ============ -->
+<div class="gate-screen" id="codeGate" style="display:none;">
+  <div class="brand-sub">THREE PYRAMIDS TRAVEL</div>
+  <h2 id="codeGateTitle">أدخل كود الدخول للاستمرار</h2>
+  <input type="tel" id="accessCode" placeholder="كود الدخول">
+  <button class="btn btn-send" onclick="checkAccessCode()">دخول</button>
+  <div class="gate-error" id="gateError">الكود غير صحيح، حاول مرة أخرى</div>
+  <div class="back-link" onclick="backFromCodeGate()">رجوع</div>
+</div>
+
+<!-- ============ CAR SCREEN CHOICE (after successful car login) ============ -->
+<div class="gate-screen" id="carScreenChoiceGate" style="display:none;">
+  <div class="brand-sub">THREE PYRAMIDS TRAVEL</div>
+  <h2 id="carScreenChoiceLabel">-</h2>
+  <div class="role-buttons" style="grid-template-columns:1fr;">
+    <button class="role-btn" onclick="openCaptainForm()"><span class="icon">🚗</span>أمر تشغيل الكابتن</button>
+    <button class="role-btn" onclick="openFuelScreen()"><span class="icon">⛽</span>رصيد الوقود</button>
+    <button class="role-btn" onclick="openSalaryScreen()"><span class="icon">💰</span>راتب السائق</button>
+  </div>
+  <div class="back-link" onclick="backToRoleGate()">رجوع للشاشة الرئيسية</div>
+</div>
+
+<!-- ============ CAPTAIN CONTAINER ============ -->
+<div class="container" id="captainContainer" style="display:none;">
+
+  <div class="header">
+    <div class="sub">CORPORATE & HOSPITALITY LOGISTICS</div>
+    <h1>THREE PYRAMIDS TRAVEL</h1>
+    <div class="sub">YOUR TRUSTED PARTNER FOR ELITE MOBILITY</div>
+    <div class="form-title">أمر شغل يومي - سجل حركة السيارة</div>
+  </div>
+
+  <div class="fixed-info one-col">
+    <div class="field-group">
+      <label>اسم وموديل العربية</label>
+      <div class="car-fixed-label" id="captainCarLabel">-</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#0d1a0d;border:1px solid #27ae60;border-radius:8px;padding:10px 16px;margin-top:10px;">
+      <span style="color:#a89060;font-size:13px;">💼 رصيد العهدة</span>
+      <span id="captainCustodyDisplay" style="color:#2ecc71;font-size:20px;font-weight:bold;">0 جنيه</span>
+    </div>
+  </div>
+
+  <div class="trips-section">
+    <h2>سجل المشاوير</h2>
+    <div id="captainTripsContainer"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-add" onclick="addCaptainTrip()">إضافة مشوار جديد</button>
+  </div>
+  <div class="btn-row" style="display:flex;gap:12px;flex-wrap:nowrap;">
+    <button class="btn btn-send" onclick="downloadCaptainSheet()">📥 تحميل شيت المشاوير</button>
+    <button class="btn btn-outline" onclick="sendCaptainWhatsAppReport()">📲 إرسال واتساب</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="refreshCustody()">🔄 تحديث رصيد العهدة</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="backToCarScreenChoice()">رجوع لاختيار الشاشة</button>
+  </div>
+
+  <div class="footer-note">
+    Three Pyramids Travel &mdash; 10th of Ramadan City, Egypt &mdash; نظام تسجيل حركة الأسطول
+  </div>
+</div>
+
+<!-- ============ FUEL BALANCE CONTAINER (captain view) ============ -->
+<div class="container" id="fuelContainer" style="display:none;">
+
+  <div class="header">
+    <div class="sub">CORPORATE & HOSPITALITY LOGISTICS</div>
+    <h1>THREE PYRAMIDS TRAVEL</h1>
+    <div class="sub">YOUR TRUSTED PARTNER FOR ELITE MOBILITY</div>
+    <div class="form-title">رصيد الوقود</div>
+  </div>
+
+  <div class="fixed-info one-col">
+    <div class="field-group">
+      <label>اسم وموديل العربية</label>
+      <div class="car-fixed-label" id="fuelCarLabel">-</div>
+    </div>
+  </div>
+
+  <div class="warning-banner" id="fuelWarningBanner" style="display:none;">⚠️ رصيد الوقود منخفض! برجاء التواصل مع مدير التشغيل ⚠️</div>
+
+  <div class="balance-display">
+    <div class="balance-label">الرصيد المتبقي</div>
+    <div class="balance-value" id="fuelBalanceValue">0 جنيه</div>
+  </div>
+
+  <div class="trips-section">
+    <h2>تسجيل تعبئة بنزين جديدة</h2>
+    <div class="trip-card">
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>المبلغ المدفوع (جنيه)</label>
+          <input type="number" id="fuelFillAmount" placeholder="0">
+        </div>
+        <div class="field-group">
+          <label>ملاحظة (اختياري)</label>
+          <input type="text" id="fuelFillNote" placeholder="مثال: محطة X">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-send" onclick="recordFuelFillUp()">تسجيل التعبئة وخصم المبلغ</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="renderFuelScreen()">🔄 تحديث الرصيد</button>
+  </div>
+
+  <div class="trips-section">
+    <h2>آخر العمليات</h2>
+    <div class="history-list" id="fuelHistoryList"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="backToCarScreenChoice()">رجوع لاختيار الشاشة</button>
+  </div>
+
+  <div class="footer-note">
+    Three Pyramids Travel &mdash; 10th of Ramadan City, Egypt &mdash; نظام متابعة رصيد الوقود
+  </div>
+</div>
+
+<!-- ============ SALARY CONTAINER (captain view, read-only) ============ -->
+<div class="container" id="salaryContainer" style="display:none;">
+
+  <div class="header">
+    <div class="sub">CORPORATE & HOSPITALITY LOGISTICS</div>
+    <h1>THREE PYRAMIDS TRAVEL</h1>
+    <div class="sub">YOUR TRUSTED PARTNER FOR ELITE MOBILITY</div>
+    <div class="form-title">راتب السائق</div>
+  </div>
+
+  <div class="fixed-info one-col">
+    <div class="field-group">
+      <label>اسم وموديل العربية</label>
+      <div class="car-fixed-label" id="salaryCarLabel">-</div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-label">المرتب الأساسي</div>
+      <div class="stat-value" id="salaryBaseValue">0 جنيه</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">إجمالي الإضافي والسهرات</div>
+      <div class="stat-value" id="salaryExtraValue">0 جنيه</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">إجمالي الخصومات</div>
+      <div class="stat-value" id="salaryDeductionsValue">0 جنيه</div>
+    </div>
+    <div class="stat-box net">
+      <div class="stat-label">صافي الراتب حتى تاريخ اليوم</div>
+      <div class="stat-value" id="salaryNetValue">0 جنيه</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="renderSalaryScreen()">🔄 تحديث بيانات الراتب</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-send" onclick="downloadSalarySheet()">تحميل بيانات الراتب</button>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="backToCarScreenChoice()">رجوع لاختيار الشاشة</button>
+  </div>
+
+  <div class="footer-note">
+    Three Pyramids Travel &mdash; 10th of Ramadan City, Egypt &mdash; بيانات الراتب للعرض والتحميل فقط، والتعديل من خلال مدير التشغيل
+  </div>
+</div>
+
+<!-- ============ MANAGER CONTAINER ============ -->
+<div class="container" id="managerContainer" style="display:none;">
+
+  <div class="header">
+    <div class="sub">CORPORATE & HOSPITALITY LOGISTICS</div>
+    <h1>THREE PYRAMIDS TRAVEL</h1>
+    <div class="sub">YOUR TRUSTED PARTNER FOR ELITE MOBILITY</div>
+    <div class="form-title">شاشة مدير التشغيل</div>
+  </div>
+
+  <div class="sub-nav">
+    <button id="mgrNavSchedule" class="active" onclick="showManagerPanel('schedule')">جدولة المشاوير</button>
+    <button id="mgrNavFuel" onclick="showManagerPanel('fuel')">رصيد الوقود</button>
+    <button id="mgrNavSalary" onclick="showManagerPanel('salary')">الراتب</button>
+    <button id="mgrNavCustody" onclick="showManagerPanel('custody')">💼 العهدة</button>
+  </div>
+
+  <!-- ---- SCHEDULE PANEL ---- -->
+  <div id="managerSchedulePanel">
+    <div class="fixed-info two-col">
+      <div class="field-group">
+        <label>اسم وموديل العربية</label>
+        <select id="managerCarGroup">
+          <option value="">اختر العربية</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>عدد المشاوير المطلوبة</label>
+        <input type="number" id="tripCount" min="1" max="11" placeholder="مثال: 5">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-add" onclick="generateManagerTrips()">توليد صفحات المشاوير</button>
+    </div>
+
+    <div class="trips-section">
+      <h2>تفاصيل المشاوير</h2>
+      <div id="managerTripsContainer"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-send" onclick="sendManagerReport()">إرسال إلى جروب الواتساب</button>
+    </div>
+  </div>
+
+  <!-- ---- FUEL MANAGEMENT PANEL ---- -->
+  <div id="managerFuelPanel" style="display:none;">
+    <div class="fixed-info two-col">
+      <div class="field-group">
+        <label>اختر العربية</label>
+        <select id="managerFuelCar" onchange="renderManagerFuelPanel()">
+          <option value="">اختر العربية</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>الرصيد الحالي</label>
+        <div class="car-fixed-label manager-editable-number" id="managerFuelBalanceDisplay" title="اضغط للتعديل" onclick="editManagerFuelBalance()">-</div>
+      </div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>المبلغ المراد إضافته (جنيه)</label>
+          <input type="number" id="managerFuelAddAmount" placeholder="0">
+        </div>
+        <div class="field-group">
+          <label>ملاحظة (اختياري)</label>
+          <input type="text" id="managerFuelAddNote" placeholder="مثال: ميزانية الشهر">
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-send" onclick="managerAddFuelBalance()">إضافة الرصيد</button>
+    </div>
+    <div class="trips-section">
+      <h2>آخر العمليات</h2>
+      <div class="history-list" id="managerFuelHistoryList"></div>
+    </div>
+  </div>
+
+  <!-- ---- SALARY MANAGEMENT PANEL ---- -->
+  <div id="managerSalaryPanel" style="display:none;">
+    <div class="fixed-info one-col">
+      <div class="field-group">
+        <label>اختر العربية</label>
+        <select id="managerSalaryCar" onchange="renderManagerSalaryPanel()">
+          <option value="">اختر العربية</option>
+        </select>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-label">المرتب الأساسي</div>
+        <div class="stat-value manager-editable-number" id="managerSalaryBaseValue" title="اضغط للتعديل" onclick="editManagerSalaryField('base')">0 جنيه</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">إجمالي الإضافي والسهرات</div>
+        <div class="stat-value manager-editable-number" id="managerSalaryExtraValue" title="اضغط للتعديل" onclick="editManagerSalaryField('extra')">0 جنيه</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">إجمالي الخصومات</div>
+        <div class="stat-value manager-editable-number" id="managerSalaryDeductionsValue" title="اضغط للتعديل" onclick="editManagerSalaryField('deductions')">0 جنيه</div>
+      </div>
+      <div class="stat-box net">
+        <div class="stat-label">صافي الراتب حتى تاريخ اليوم</div>
+        <div class="stat-value manager-editable-number" id="managerSalaryNetValue" title="اضغط للتعديل" onclick="editManagerSalaryField('net')">0 جنيه</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;">
+      <h2>عمليات الراتب</h2>
+      <div class="history-list" id="managerSalaryHistoryList"></div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>تحديد / تعديل المرتب الأساسي</label>
+          <input type="number" id="managerBaseSalaryInput" placeholder="8000">
+        </div>
+        <div class="field-group" style="justify-content:flex-end;">
+          <button class="btn btn-outline" onclick="managerSetBaseSalary()">حفظ المرتب الأساسي</button>
+        </div>
+      </div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>إضافة إضافي / سهر (جنيه)</label>
+          <input type="number" id="managerExtraAmount" placeholder="0">
+        </div>
+        <div class="field-group">
+          <label>ملاحظة</label>
+          <input type="text" id="managerExtraNote" placeholder="مثال: سهرة يوم 5">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-add" onclick="managerAddSalaryExtra()">إضافة</button>
+      </div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>إضافة خصم (جنيه)</label>
+          <input type="number" id="managerDeductionAmount" placeholder="0">
+        </div>
+        <div class="field-group">
+          <label>سبب الخصم</label>
+          <input type="text" id="managerDeductionNote" placeholder="مثال: تأخير">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-add" onclick="managerAddSalaryDeduction()">إضافة خصم</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- CUSTODY MANAGEMENT PANEL ---- -->
+  <div id="managerCustodyPanel" style="display:none;">
+    <div class="fixed-info two-col">
+      <div class="field-group">
+        <label>اختر العربية</label>
+        <select id="managerCustodyCar" onchange="renderManagerCustodyPanel()">
+          <option value="">اختر العربية</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>الرصيد الحالي</label>
+        <div class="car-fixed-label manager-editable-number" id="managerCustodyDisplay" style="color:#2ecc71;" title="اضغط للتعديل" onclick="editManagerCustodyBalance()">-</div>
+      </div>
+    </div>
+    <div class="trip-card">
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>تحديد / إعادة شحن العهدة (جنيه)</label>
+          <input type="number" id="managerCustodyAmount" placeholder="مثال: 2000">
+        </div>
+        <div class="field-group">
+          <label>ملاحظة</label>
+          <input type="text" id="managerCustodyNote" placeholder="مثال: عهدة شهر سبتمبر">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-send" onclick="managerSetCustody()">✅ تحديد / شحن العهدة</button>
+      </div>
+    </div>
+    <div class="trips-section">
+      <h2>رصيد العهدة لكل عربية</h2>
+      <div id="managerCustodyAllCars"></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="backToRoleGate()">رجوع للشاشة الرئيسية</button>
+  </div>
+
+  <div class="footer-note">
+    Three Pyramids Travel &mdash; 10th of Ramadan City, Egypt &mdash; نظام جدولة مأموريات مدير التشغيل
+  </div>
+</div>
+
+<script>
+/* ================= Shared data ================= */
+const CAR_GROUPS = [
+  { id: "toyota2023", name: "تويوتا 2023",        code: "2147", link: "https://chat.whatsapp.com/EOQRo5vsLC7Jno6w6uRbgl" },
+  { id: "elantra2025", name: "هيونداي إلنترا 2025", code: "8963", link: "https://chat.whatsapp.com/Gx8stYLNTrp69pFzdMGLOW" },
+  { id: "toyota2022", name: "تويوتا 2022",        code: "1478", link: "https://chat.whatsapp.com/F1f27NZJOhR10dVEaTnJMy" },
+  { id: "cn7", name: "هيونداي CN7",                code: "1234", link: "https://chat.whatsapp.com/JNQ9Z4Tiu9QKa8UjwgqtZo" }
+];
+
+const MANAGER_CODE = "123789";
+
+const TRIP_ORDINALS = ["الأول","الثاني","الثالث","الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر"];
+
+let pendingRole = null;      // 'captain' or 'manager'
+let pendingCarIndex = null;  // index in CAR_GROUPS, for captain flow
+let activeCarIndex = null;   // the car the captain is currently working with, after successful login
+
+/* ================= Gate logic ================= */
+function goToCarSelect() {
+  pendingRole = 'captain';
+  document.getElementById('roleGate').style.display = 'none';
+  const container = document.getElementById('carButtonsContainer');
+  container.innerHTML = '';
+  CAR_GROUPS.forEach((car, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'role-btn';
+    btn.innerHTML = `<span class="icon">🚗</span>${car.name}`;
+    btn.onclick = () => openCarCodeGate(idx);
+    container.appendChild(btn);
+  });
+  document.getElementById('carSelectGate').style.display = 'block';
+}
+
+function openCarCodeGate(idx) {
+  pendingCarIndex = idx;
+  document.getElementById('carSelectGate').style.display = 'none';
+  document.getElementById('codeGate').style.display = 'block';
+  document.getElementById('codeGateTitle').textContent = 'كود دخول ' + CAR_GROUPS[idx].name;
+  document.getElementById('accessCode').value = '';
+  document.getElementById('gateError').style.display = 'none';
+  document.getElementById('accessCode').focus();
+}
+
+function openManagerCodeGate() {
+  pendingRole = 'manager';
+  pendingCarIndex = null;
+  document.getElementById('roleGate').style.display = 'none';
+  document.getElementById('codeGate').style.display = 'block';
+  document.getElementById('codeGateTitle').textContent = 'كود دخول مدير التشغيل';
+  document.getElementById('accessCode').value = '';
+  document.getElementById('gateError').style.display = 'none';
+  document.getElementById('accessCode').focus();
+}
+
+function backToRoleGate() {
+  document.getElementById('roleGate').style.display = 'block';
+  document.getElementById('carSelectGate').style.display = 'none';
+  document.getElementById('codeGate').style.display = 'none';
+  document.getElementById('carScreenChoiceGate').style.display = 'none';
+  document.getElementById('captainContainer').style.display = 'none';
+  document.getElementById('fuelContainer').style.display = 'none';
+  document.getElementById('salaryContainer').style.display = 'none';
+  document.getElementById('managerContainer').style.display = 'none';
+  pendingRole = null;
+  pendingCarIndex = null;
+  activeCarIndex = null;
+}
+
+function backFromCodeGate() {
+  document.getElementById('codeGate').style.display = 'none';
+  if (pendingRole === 'captain') {
+    document.getElementById('carSelectGate').style.display = 'block';
+  } else {
+    document.getElementById('roleGate').style.display = 'block';
+  }
+}
+
+function checkAccessCode() {
+  const entered = document.getElementById('accessCode').value.trim();
+  const errorMsg = document.getElementById('gateError');
+
+  if (pendingRole === 'captain' && pendingCarIndex !== null && entered === CAR_GROUPS[pendingCarIndex].code) {
+    activeCarIndex = pendingCarIndex;
+    document.getElementById('codeGate').style.display = 'none';
+    showCarScreenChoice();
+  } else if (pendingRole === 'manager' && entered === MANAGER_CODE) {
+    document.getElementById('codeGate').style.display = 'none';
+    document.getElementById('managerContainer').style.display = 'block';
+  } else {
+    errorMsg.style.display = 'block';
+  }
+}
+
+/* ================= Car screen choice (captain, after login) ================= */
+function showCarScreenChoice() {
+  document.getElementById('carScreenChoiceLabel').textContent = 'اختر الشاشة - ' + CAR_GROUPS[activeCarIndex].name;
+  document.getElementById('carScreenChoiceGate').style.display = 'block';
+}
+
+function openCaptainForm() {
+  document.getElementById('carScreenChoiceGate').style.display = 'none';
+  document.getElementById('captainCarLabel').textContent = CAR_GROUPS[activeCarIndex].name;
+  document.getElementById('captainTripsContainer').innerHTML = '';
+  captainTripCount = 0;
+  addCaptainTrip();
+  document.getElementById('captainContainer').style.display = 'block';
+  // sync custody from shared db first
+  const carId = CAR_GROUPS[activeCarIndex].id;
+  getCustodyBalanceAsync(carId).then(() => updateCustodyBalance());
+  // live sync العهدة
+  dbListen(custodyKey(carId), function(val) {
+    if (val && val.balance !== undefined) {
+      localStorage.setItem(custodyKey(carId), val.balance.toString());
+      updateCustodyBalance();
+    }
+  });
+}
+
+function openFuelScreen() {
+  document.getElementById('carScreenChoiceGate').style.display = 'none';
+  renderFuelScreen();
+  document.getElementById('fuelContainer').style.display = 'block';
+  startPolling('fuel', renderFuelScreen);
+}
+
+function openSalaryScreen() {
+  document.getElementById('carScreenChoiceGate').style.display = 'none';
+  renderSalaryScreen();
+  document.getElementById('salaryContainer').style.display = 'block';
+  startPolling('salary', renderSalaryScreen);
+}
+
+function backToCarScreenChoice() {
+  stopPolling();
+  document.getElementById('captainContainer').style.display = 'none';
+  document.getElementById('fuelContainer').style.display = 'none';
+  document.getElementById('salaryContainer').style.display = 'none';
+  showCarScreenChoice();
+}
+
+function populateCarDropdowns() {
+  const selects = [
+    document.getElementById('managerCarGroup'),
+    document.getElementById('managerFuelCar'),
+    document.getElementById('managerSalaryCar')
+  ];
+  selects.forEach(sel => {
+    if (!sel) return;
+    CAR_GROUPS.forEach((g, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = g.name;
+      sel.appendChild(opt);
+    });
+  });
+  document.getElementById('managerFuelCar').addEventListener('change', renderManagerFuelPanel);
+  document.getElementById('managerSalaryCar').addEventListener('change', renderManagerSalaryPanel);
+  // custody dropdown
+  const custodySel = document.getElementById('managerCustodyCar');
+  if (custodySel) {
+    CAR_GROUPS.forEach((g, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx; opt.textContent = g.name;
+      custodySel.appendChild(opt);
+    });
+  }
+}
+populateCarDropdowns();
+
+document.getElementById('accessCode').addEventListener('keyup', function(e) {
+  if (e.key === 'Enter') checkAccessCode();
+});
+
+/* ================= Helpers ================= */
+function setCaptainPeriod(btn, val) {
+  const card = btn.closest('.trip-card');
+  card.querySelectorAll('.period-btn').forEach(b => b.classList.remove('p-sabah','p-masaa'));
+  btn.classList.add(val === 'صباحاً' ? 'p-sabah' : 'p-masaa');
+  if (card.querySelector('.f-period')) card.querySelector('.f-period').value = val;
+}
+
+function setPeriod(btn, val) {
+  const row = btn.closest('.time-banner-row');
+  row.querySelectorAll('.period-btn').forEach(b => b.classList.remove('p-sabah','p-masaa'));
+  btn.classList.add(val === 'صباحاً' ? 'p-sabah' : 'p-masaa');
+  row.closest('.time-banner').querySelector('.m-period').value = val;
+}
+
+function setCapPeriod(btn, val) {
+  const card = btn.closest('.trip-card');
+  card.querySelectorAll('.f-period ~ .period-btns .period-btn, .period-btn').forEach(b => b.classList.remove('p-sabah','p-masaa'));
+  btn.closest('.period-btns').querySelectorAll('.period-btn').forEach(b => b.classList.remove('p-sabah','p-masaa'));
+  btn.classList.add(val === 'صباحاً' ? 'p-sabah' : 'p-masaa');
+  card.querySelector('.f-period').value = val;
+}
+
+function formatTime12WithPeriod(t, forcePeriod) {
+  if (!t) return '-';
+  const parts = t.split(':');
+  let h = parseInt(parts[0], 10);
+  const m = parts[1] || '00';
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  const period = forcePeriod || (h >= 12 ? 'مساءً' : 'صباحاً');
+  return `${h12}:${m} ${period}`;
+}
+
+function autoGrow(el) {
+  el.style.height = "auto";
+  el.style.height = (el.scrollHeight) + "px";
+}
+
+function formatTime12(t) {
+  if (!t) return '-';
+  const parts = t.split(':');
+  let h = parseInt(parts[0], 10);
+  const m = parts[1] || '00';
+  const period = h >= 12 ? 'مساءً' : 'صباحاً';
+  let h12 = h % 12;
+  if (h12 === 0) h12 = 12;
+  return `${h12}:${m} ${period}`;
+}
+
+function copyAndOpen(message, link) {
+  const doOpen = () => window.open(link, '_blank');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(message)
+      .then(() => { alert('✅ تم نسخ الرسالة. سيفتح الجروب الآن — اضغط لصق وأرسل.'); doOpen(); })
+      .catch(() => { fallbackCopy(message); doOpen(); });
+  } else {
+    fallbackCopy(message);
+    doOpen();
+  }
+}
+
+function fallbackCopy(message) {
+  const ta = document.createElement('textarea');
+  ta.value = message;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  alert('✅ تم نسخ الرسالة. سيفتح الجروب الآن — اضغط لصق وأرسل.');
+}
+
+/* ================= CAPTAIN FORM ================= */
+let captainTripCount = 0;
+
+function addCaptainTrip() {
+  captainTripCount++;
+  const container = document.getElementById('captainTripsContainer');
+
+  let prefillBefore = '';
+  const existingCards = container.querySelectorAll('.trip-card');
+  if (existingCards.length > 0) {
+    const lastCard = existingCards[existingCards.length - 1];
+    const lastAfter = lastCard.querySelector('.f-after').value;
+    if (lastAfter) prefillBefore = lastAfter;
+  } else if (activeCarIndex !== null) {
+    prefillBefore = getLastOdo(CAR_GROUPS[activeCarIndex].id);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'trip-card';
+  card.id = 'ctrip-' + captainTripCount;
+  card.innerHTML = `
+    <div class="trip-number">مشوار ${captainTripCount}</div>
+    <div class="trip-grid">
+      <div class="field-group">
+        <label>التاريخ</label>
+        <input type="date" class="f-date">
+      </div>
+      <div class="field-group">
+        <label>وقت التحرك</label>
+        <div class="time12-row" style="display:flex;gap:5px;margin-bottom:6px;">
+          <select class="f-time-h" style="flex:1;">
+            <option value="">س</option>
+            <option>01</option><option>02</option><option>03</option><option>04</option>
+            <option>05</option><option>06</option><option>07</option><option>08</option>
+            <option>09</option><option>10</option><option>11</option><option>12</option>
+          </select>
+          <select class="f-time-m" style="flex:1;">
+            <option value="">د</option>
+            <option>00</option><option>05</option><option>10</option><option>15</option>
+            <option>20</option><option>25</option><option>30</option><option>35</option>
+            <option>40</option><option>45</option><option>50</option><option>55</option>
+          </select>
+        </div>
+        <div class="period-btns">
+          <button type="button" class="period-btn p-sabah" onclick="setCapPeriod(this,'صباحاً')">🌅 صباحاً</button>
+          <button type="button" class="period-btn" onclick="setCapPeriod(this,'مساءً')">🌙 مساءً</button>
+        </div>
+        <input type="hidden" class="f-period" value="صباحاً">
+      </div>
+    </div>
+    <div class="trip-grid" style="margin-bottom:0;">
+      <div class="field-group">
+        <label>المصروف (جنيه)</label>
+        <input type="number" class="f-expense" placeholder="0" oninput="updateCustodyBalance()">
+      </div>
+      <div class="field-group">
+        <label>بيان المصروف</label>
+        <input type="text" class="f-expense-note" placeholder="مثال: وقود / طوارئ">
+      </div>
+    </div>
+    <div class="custody-balance-bar" id="custodyBar_${captainTripCount}" style="background:linear-gradient(135deg,#1a3a2a,#0d1a0d);border:1px solid #27ae60;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="color:#a89060;font-size:13px;">💼 رصيد العهدة المتبقي</span>
+      <span class="custody-remain" style="color:#2ecc71;font-size:18px;font-weight:bold;">جاري الحساب...</span>
+    </div>
+    <div class="field-group" style="margin-bottom:12px;">
+      <label>بيان المأمورية</label>
+      <textarea class="autogrow" oninput="autoGrow(this)" placeholder="مثال: من البيت إلى مطار القاهرة ثم إلى مقر الشركة ثم إلى البيت"></textarea>
+    </div>
+    <div class="trip-grid">
+      <div class="field-group">
+        <label>كيلومتر العداد قبل التحرك</label>
+        <input type="number" class="f-before" placeholder="0" value="${prefillBefore}">
+      </div>
+      <div class="field-group">
+        <label>كيلومتر العداد بعد التحرك</label>
+        <input type="number" class="f-after" placeholder="0">
+      </div>
+    </div>
+    <div class="photo-row">
+      <div class="photo-box">
+        <label>صورة العداد قبل</label>
+        <input type="file" accept="image/*" capture="environment" class="f-photo-before" onchange="previewPhoto(this)">
+        <img class="photo-preview">
+      </div>
+      <div class="photo-box">
+        <label>صورة العداد بعد</label>
+        <input type="file" accept="image/*" capture="environment" class="f-photo-after" onchange="previewPhoto(this)">
+        <img class="photo-preview">
+      </div>
+    </div>
+    <button class="remove-trip" onclick="removeCaptainTrip(${captainTripCount})">حذف هذا المشوار</button>
+  `;
+  container.appendChild(card);
+}
+
+function previewPhoto(input) {
+  const preview = input.parentElement.querySelector('.photo-preview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeCaptainTrip(id) {
+  const el = document.getElementById('ctrip-' + id);
+  if (el) el.remove();
+}
+
+/* ================= Custody helpers ================= */
+function custodyKey(carId) { return 'tp_custody_' + carId; }
+
+function getCustodyBalance(carId) {
+  return parseFloat(localStorage.getItem(custodyKey(carId)) || '0');
+}
+
+function setCustodyBalance(carId, val) {
+  localStorage.setItem(custodyKey(carId), val.toFixed(2));
+  return dbSet(custodyKey(carId), { balance: val, updated: todayStr(), updatedAt: Date.now() });
+}
+
+async function getCustodyBalanceAsync(carId) {
+  const d = await dbGet(custodyKey(carId));
+  if (d && d.balance !== undefined) {
+    localStorage.setItem(custodyKey(carId), d.balance.toString());
+    return d.balance;
+  }
+  return parseFloat(localStorage.getItem(custodyKey(carId)) || '0');
+}
+
+async function refreshCustody() {
+  if (activeCarIndex === null) return;
+  const carId = CAR_GROUPS[activeCarIndex].id;
+  await getCustodyBalanceAsync(carId);
+  updateCustodyBalance();
+  alert('✅ تم تحديث رصيد العهدة');
+}
+
+function updateCustodyBalance() {
+  if (activeCarIndex === null) return;
+  const carId = CAR_GROUPS[activeCarIndex].id;
+  const initialBalance = getCustodyBalance(carId);
+  const cards = document.querySelectorAll('#captainTripsContainer .trip-card');
+  let spent = 0;
+  cards.forEach(card => {
+    const exp = parseFloat(card.querySelector('.f-expense').value || '0');
+    spent += exp;
+  });
+  const remaining = initialBalance - spent;
+  const mainDisp = document.getElementById('captainCustodyDisplay');
+  if (mainDisp) {
+    mainDisp.textContent = fmtMoney(remaining);
+    mainDisp.style.color = remaining < 200 ? '#e74c3c' : '#2ecc71';
+  }
+  cards.forEach((card, i) => {
+    let spentSoFar = 0;
+    for (let j = 0; j <= i; j++) {
+      spentSoFar += parseFloat(cards[j].querySelector('.f-expense').value || '0');
+    }
+    const rem = initialBalance - spentSoFar;
+    const bar = card.querySelector('.custody-remain');
+    if (bar) {
+      bar.textContent = fmtMoney(rem);
+      bar.style.color = rem < 200 ? '#e74c3c' : '#2ecc71';
+    }
+  });
+}
+
+/* ================= Local storage & Excel helpers ================= */
+function odoStorageKey(carId) { return 'tp_lastOdo_' + carId; }
+function tripsStorageKey(carId) { return 'tp_trips_' + carId; }
+
+function getLastOdo(carId) {
+  return localStorage.getItem(odoStorageKey(carId)) || '';
+}
+function setLastOdo(carId, value) {
+  if (value) localStorage.setItem(odoStorageKey(carId), value);
+}
+function getStoredTrips(carId) {
+  try {
+    const raw = localStorage.getItem(tripsStorageKey(carId));
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+function appendStoredTrips(carId, newTrips) {
+  const existing = getStoredTrips(carId);
+  const merged = existing.concat(newTrips);
+  localStorage.setItem(tripsStorageKey(carId), JSON.stringify(merged));
+  return merged;
+}
+
+function buildTripsWorkbook(carName, allTrips) {
+  const headerRow = ['التاريخ', 'وقت التحرك', 'بيان المأمورية', 'كيلومتر قبل التحرك', 'كيلومتر بعد التحرك', 'المصروف (جنيه)', 'بيان المصروف'];
+  const rows = allTrips.map(t => [t.date, t.time, t.mamoreya, t.before, t.after, t.expense, t.expenseNote || '-']);
+  const colCount = headerRow.length;
+
+  const wsData = [[`سجل مشاوير - ${carName}`], [], headerRow].concat(rows);
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  const GOLD = 'D4AF37';
+  const DARK = '1A1410';
+  const BORDER_COLOR = 'B8860B';
+  const CREAM = 'FFF8E7';
+
+  const thinBorder = { style: 'thin', color: { rgb: BORDER_COLOR } };
+  const fullBorder = { top: thinBorder, bottom: thinBorder, left: thinBorder, right: thinBorder };
+
+  ws['A1'].s = {
+    font: { bold: true, sz: 14, color: { rgb: GOLD } },
+    fill: { fgColor: { rgb: DARK } },
+    alignment: { horizontal: 'center', vertical: 'center' },
+    border: fullBorder
+  };
+  ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: colCount - 1 } }];
+
+  const wrapCols = [2];
+  for (let c = 0; c < colCount; c++) {
+    const addr = XLSX.utils.encode_cell({ r: 2, c });
+    if (!ws[addr]) ws[addr] = { t: 's', v: headerRow[c] };
+    ws[addr].s = {
+      font: { bold: true, sz: 12, color: { rgb: DARK } },
+      fill: { fgColor: { rgb: GOLD } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: fullBorder
+    };
+  }
+
+  rows.forEach((rowData, i) => {
+    const r = 3 + i;
+    const rowFill = i % 2 === 0 ? CREAM : 'FFFFFF';
+    for (let c = 0; c < colCount; c++) {
+      const addr = XLSX.utils.encode_cell({ r, c });
+      if (!ws[addr]) ws[addr] = { t: 's', v: '' };
+      ws[addr].s = {
+        font: { sz: 11, color: { rgb: DARK } },
+        fill: { fgColor: { rgb: rowFill } },
+        alignment: {
+          horizontal: wrapCols.includes(c) ? 'right' : 'center',
+          vertical: 'center',
+          wrapText: wrapCols.includes(c)
+        },
+        border: fullBorder
+      };
+    }
+  });
+
+  ws['!cols'] = [{ wch: 12 }, { wch: 14 }, { wch: 38 }, { wch: 16 }, { wch: 16 }, { wch: 13 }, { wch: 22 }];
+  ws['!rows'] = [{ hpx: 26 }, { hpx: 6 }, { hpx: 22 }];
+
+  const wb = XLSX.utils.book_new();
+  wb.Workbook = { Views: [{ RTL: true }] };
+  XLSX.utils.book_append_sheet(wb, ws, 'سجل المشاوير');
+  return wb;
+}
+
+function collectCaptainTripsFromForm() {
+  const cards = document.querySelectorAll('#captainTripsContainer .trip-card');
+  const trips = [];
+  cards.forEach(card => {
+    const date = card.querySelector('.f-date').value || '-';
+    const fPeriodEl = card.querySelector('.f-period');
+    const fPeriod = fPeriodEl ? fPeriodEl.value : 'صباحاً';
+    const cH = card.querySelector('.f-time-h').value || '';
+    const cM = card.querySelector('.f-time-m').value || '00';
+    const time = cH ? `${cH}:${cM} ${fPeriod}` : '-';
+    const mamoreya = card.querySelector('.autogrow').value.trim() || '-';
+    const before = card.querySelector('.f-before').value || '-';
+    const after = card.querySelector('.f-after').value || '-';
+    const expense = card.querySelector('.f-expense').value || '0';
+    const expenseNote = card.querySelector('.f-expense-note').value.trim() || '-';
+    trips.push({ date, time, mamoreya, before, after, expense, expenseNote });
+  });
+  return trips;
+}
+
+function downloadCaptainSheet() {
+  if (activeCarIndex === null) {
+    alert('حدث خطأ في تحديد العربية، من فضلك رجع للشاشة الرئيسية وسجل دخولك تاني');
+    return;
+  }
+
+  const trips = collectCaptainTripsFromForm();
+  if (trips.length === 0) {
+    alert('من فضلك أضف مشوار واحد على الأقل');
+    return;
+  }
+
+  const car = CAR_GROUPS[activeCarIndex];
+  const lastTrip = trips[trips.length - 1];
+  if (lastTrip.after && lastTrip.after !== '-') setLastOdo(car.id, lastTrip.after);
+
+  // Keep the existing sheet workflow exactly as before: save the current trips,
+  // update custody, then generate the Excel file for this car.
+  const allTrips = appendStoredTrips(car.id, trips);
+  const totalSpent = trips.reduce((s, t) => s + parseFloat(t.expense || 0), 0);
+  const prevBal = getCustodyBalance(car.id);
+  const newBal = prevBal - totalSpent;
+  setCustodyBalance(car.id, newBal);
+
+  try {
+    const wb = buildTripsWorkbook(car.name, allTrips);
+    const fileName = `سجل_مشاوير_${car.name.replace(/\s+/g, '_')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    alert(`✅ تم تحميل شيت المشاوير بنجاح باسم:\n"${fileName}"\n\nهتلاقيه في تطبيق الملفات (Files / My Files) داخل فولدر Downloads بموبايلك.`);
+  } catch (e) {
+    alert('حصل خطأ في إنشاء ملف الإكسيل، تأكد من اتصالك بالإنترنت وحاول تاني');
+  }
+}
+
+function sendCaptainWhatsAppReport() {
+  if (activeCarIndex === null) {
+    alert('حدث خطأ في تحديد العربية، من فضلك رجع للشاشة الرئيسية وسجل دخولك تاني');
+    return;
+  }
+
+  const trips = collectCaptainTripsFromForm();
+  if (trips.length === 0) {
+    alert('من فضلك أضف مشوار واحد على الأقل');
+    return;
+  }
+
+  const car = CAR_GROUPS[activeCarIndex];
+
+  // WhatsApp message: every line/field is numbered separately for each trip.
+  let message = `*🚗 تقرير المشاوير - Three Pyramids Travel*\n`;
+  message += `━━━━━━━━━━━━━━━━━━━━\n`;
+  message += `*🚘 العربية:* ${car.name}\n`;
+  message += `*📋 عدد المشاوير:* ${trips.length}\n`;
+  message += `━━━━━━━━━━━━━━━━━━━━\n`;
+
+  trips.forEach((t, i) => {
+    message += `\n*🔹 المشوار ${i + 1}*\n`;
+    message += `*1. 📅 التاريخ:* ${t.date}\n`;
+    message += `*2. 🕐 وقت التحرك:* ${t.time}\n`;
+    message += `*3. 📍 المأمورية:* ${t.mamoreya}\n`;
+    message += `*4. 🔢 العداد قبل:* ${t.before}\n`;
+    message += `*5. 🔢 العداد بعد:* ${t.after}\n`;
+    message += `*6. 💰 المصروف:* ${t.expense} جنيه`;
+    if (t.expenseNote && t.expenseNote !== '-') {
+      message += `\n*7. 🧾 بيان المصروف:* ${t.expenseNote}`;
+    }
+    message += `\n`;
+    if (i < trips.length - 1) message += `━━━━━━━━━━━━━━━━━━━━\n`;
+  });
+
+  message += `\n━━━━━━━━━━━━━━━━━━━━\n`;
+  message += `*📸 ملاحظة:* صور العدادات يتم إرسالها كمرفقات في نفس محادثة الجروب بعد إرسال الرسالة.`;
+
+  copyAndOpen(message, car.link);
+}
+
+/* ================= MANAGER FORM ================= */
+function toggleTypeFields(selectEl) {
+  const card = selectEl.closest('.trip-card');
+  const type = selectEl.value;
+  const flightWrap = card.querySelector('.flight-wrap');
+  const terminalWrap = card.querySelector('.terminal-wrap');
+  if (type === 'استقبال مطار') {
+    flightWrap.style.display = 'flex';
+    terminalWrap.style.display = 'flex';
+  } else if (type === 'سفر') {
+    flightWrap.style.display = 'none';
+    terminalWrap.style.display = 'flex';
+    terminalWrap.style.gridColumn = '1 / -1';
+  } else {
+    flightWrap.style.display = 'none';
+    terminalWrap.style.display = 'none';
+  }
+}
+
+function generateManagerTrips() {
+  const count = parseInt(document.getElementById('tripCount').value, 10);
+  if (!count || count < 1 || count > 11) {
+    alert('من فضلك اكتب عدد مشاوير صحيح من 1 إلى 11');
+    return;
+  }
+  const container = document.getElementById('managerTripsContainer');
+  container.innerHTML = '';
+
+  for (let i = 0; i < count; i++) {
+    const card = document.createElement('div');
+    card.className = 'trip-card';
+    card.innerHTML = `
+      <div class="page-badge-manager">المشوار ${TRIP_ORDINALS[i] || (i + 1)}</div>
+
+      <div class="time-banner">
+        <div class="time-banner-label">وقت الوصول إلى العميل</div>
+        <div class="time-banner-row">
+          <div class="period-btns">
+            <button type="button" class="period-btn p-sabah" onclick="setPeriod(this,'صباحاً')">🌅 صباحاً</button>
+            <button type="button" class="period-btn" onclick="setPeriod(this,'مساءً')">🌙 مساءً</button>
+          </div>
+          <input type="hidden" class="m-period" value="صباحاً">
+          <div class="time12-row" style="display:flex;gap:5px;">
+            <select class="m-time-h" style="flex:1;">
+              <option value="">س</option>
+              <option>01</option><option>02</option><option>03</option><option>04</option>
+              <option>05</option><option>06</option><option>07</option><option>08</option>
+              <option>09</option><option>10</option><option>11</option><option>12</option>
+            </select>
+            <select class="m-time-m" style="flex:1;">
+              <option value="">د</option>
+              <option>00</option><option>05</option><option>10</option><option>15</option>
+              <option>20</option><option>25</option><option>30</option><option>35</option>
+              <option>40</option><option>45</option><option>50</option><option>55</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="trip-grid three">
+        <div class="field-group">
+          <label>المشوار</label>
+          <select class="m-day">
+            <option value="النهاردة">النهاردة</option>
+            <option value="بكرة">بكرة</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>نوع المشوار</label>
+          <select class="m-type" onchange="toggleTypeFields(this)">
+            <option value="مشوار">مشوار</option>
+            <option value="مأمورية">مأمورية</option>
+            <option value="سفر">سفر</option>
+            <option value="استقبال مطار">استقبال مطار</option>
+          </select>
+        </div>
+      </div>
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>من</label>
+          <input type="text" class="m-from" placeholder="نقطة الانطلاق">
+        </div>
+        <div class="field-group">
+          <label>إلى</label>
+          <input type="text" class="m-to" placeholder="نقطة الوصول">
+        </div>
+      </div>
+      <div class="trip-grid">
+        <div class="field-group flight-wrap" style="display:none;">
+          <label>رقم الرحلة</label>
+          <input type="text" class="m-flight" placeholder="رقم الرحلة">
+        </div>
+        <div class="field-group terminal-wrap" style="display:none;">
+          <label>رقم الصالة (Terminal)</label>
+          <input type="text" class="m-terminal" placeholder="مثال: Terminal 3">
+        </div>
+      </div>
+      <div class="trip-grid">
+        <div class="field-group">
+          <label>اسم العميل</label>
+          <input type="text" class="m-client-name" placeholder="اسم العميل">
+        </div>
+        <div class="field-group">
+          <label>رقم العميل</label>
+          <input type="tel" class="m-client-phone" placeholder="رقم تليفون العميل">
+        </div>
+      </div>
+      <div class="field-group" style="margin-bottom:12px;">
+        <label>اسم المصنع</label>
+        <input type="text" class="m-factory" placeholder="اسم المصنع / الشركة">
+      </div>
+      <div class="field-group">
+        <label>ملاحظات هامة</label>
+        <textarea class="autogrow m-notes" oninput="autoGrow(this)" placeholder="أي ملاحظات إضافية"></textarea>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+}
+
+function sendManagerReport() {
+  const groupSelect = document.getElementById('managerCarGroup');
+  const groupIdx = groupSelect.value;
+
+  if (groupIdx === '') {
+    alert('من فضلك اختر اسم وموديل العربية قبل الإرسال');
+    return;
+  }
+
+  const cards = document.querySelectorAll('#managerTripsContainer .trip-card');
+  if (cards.length === 0) {
+    alert('من فضلك اضغط "توليد صفحات المشاوير" وأدخل التفاصيل أولاً');
+    return;
+  }
+
+  const group = CAR_GROUPS[groupIdx];
+  let message = `*تعليمات مدير التشغيل - Three Pyramids Travel*\n`;
+  message += `--------------------------\n`;
+  message += `العربية: ${group.name}\n`;
+  message += `--------------------------\n`;
+
+  cards.forEach((card, i) => {
+    const day = card.querySelector('.m-day').value;
+    const period = card.querySelector('.m-period').value;
+    const mH = card.querySelector('.m-time-h').value || '-';
+    const mM = card.querySelector('.m-time-m').value || '00';
+    const time = (mH !== '-') ? `${mH}:${mM}` : '-';
+    const type = card.querySelector('.m-type').value;
+    const from = card.querySelector('.m-from').value.trim() || '-';
+    const to = card.querySelector('.m-to').value.trim() || '-';
+    const flight = card.querySelector('.m-flight').value.trim() || '-';
+    const terminal = card.querySelector('.m-terminal').value.trim() || '-';
+    const clientName = card.querySelector('.m-client-name').value.trim() || '-';
+    const clientPhone = card.querySelector('.m-client-phone').value.trim() || '-';
+    const factory = card.querySelector('.m-factory').value.trim() || '-';
+    const notes = card.querySelector('.m-notes').value.trim() || '-';
+
+    if (i > 0) message += `\n➖➖➖➖➖➖➖➖➖➖\n\n`;
+
+    message += `\n*المشوار ${TRIP_ORDINALS[i] || (i + 1)}*\n`;
+
+    const fields = [
+      { label: 'المشوار', value: day },
+      { label: 'وقت الوصول', value: `*${time || '-'} ${period}*` },
+      { label: 'نوع المشوار', value: type },
+      { label: 'من', value: from },
+      { label: 'إلى', value: to }
+    ];
+    if (type === 'استقبال مطار') {
+      fields.push({ label: 'رقم الرحلة', value: flight });
+      fields.push({ label: 'رقم الصالة', value: terminal });
+    } else if (type === 'سفر') {
+      fields.push({ label: 'رقم الصالة', value: terminal });
+    }
+    fields.push({ label: 'اسم العميل', value: clientName });
+    fields.push({ label: 'رقم العميل', value: clientPhone });
+    fields.push({ label: 'اسم المصنع', value: factory });
+    fields.push({ label: 'ملاحظات', value: notes });
+
+    fields.forEach((f, idx) => {
+      let val = f.value;
+      if ((f.label === 'رقم الرحلة' || f.label === 'رقم الصالة' || f.label === 'ملاحظات') && val !== '-') val = `*${val}*`;
+      message += `*${idx + 1}.* ${f.label}: ${val}\n`;
+    });
+  });
+
+  message += `\n--------------------------`;
+  copyAndOpen(message, group.link);
+}
+
+/* ================= Manager panel switch ================= */
+function showManagerPanel(panel) {
+  document.getElementById('managerSchedulePanel').style.display = panel === 'schedule' ? 'block' : 'none';
+  document.getElementById('managerFuelPanel').style.display = panel === 'fuel' ? 'block' : 'none';
+  document.getElementById('managerSalaryPanel').style.display = panel === 'salary' ? 'block' : 'none';
+  document.getElementById('managerCustodyPanel').style.display = panel === 'custody' ? 'block' : 'none';
+  document.getElementById('mgrNavSchedule').classList.toggle('active', panel === 'schedule');
+  document.getElementById('mgrNavFuel').classList.toggle('active', panel === 'fuel');
+  document.getElementById('mgrNavSalary').classList.toggle('active', panel === 'salary');
+  document.getElementById('mgrNavCustody').classList.toggle('active', panel === 'custody');
+  if (panel === 'custody') renderManagerCustodyPanel();
+}
+
+/* ================= Firebase & Data Functions ================= */
+const FB_URL = "https://three-pyramids-d8ce7-default-rtdb.firebaseio.com";
+
+async function dbGet(key) {
+  try {
+    const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(key) + '.json');
+    if (res.ok) {
+      const val = await res.json();
+      if (val !== null) {
+        localStorage.setItem(key, JSON.stringify(val));
+        return val;
+      }
+    }
+  } catch(e) {}
+  const raw = localStorage.getItem(key);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { localStorage.removeItem(key); return null; }
+}
+
+async function dbSet(key, value) {
+  // Save locally first so the screen never loses the latest user action.
+  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(key) + '.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(value)
+    });
+    if (!res.ok) throw new Error('Firebase HTTP ' + res.status);
+    return true;
+  } catch (e) {
+    console.warn('Firebase save failed for ' + key, e);
+    return false;
+  }
+}
+
+window._listeners = {};
+function dbListen(key, callback) {
+  window._listeners[key] = callback;
+}
+
+
+// ===== Robust shared-data merge =====
+// Older versions of the app stored salary/fuel records without updatedAt.
+// When both local/cloud records had updatedAt=0, the old code preferred the
+// cloud record and could replace a real local value with a default zero.
+function recordMeaningful(type, record) {
+  if (!record || typeof record !== 'object') return false;
+  if (type === 'salary') {
+    return (Number(record.baseSalary) || 0) !== 0 ||
+      (Array.isArray(record.extra) && record.extra.length > 0) ||
+      (Array.isArray(record.deductions) && record.deductions.length > 0);
+  }
+  if (type === 'fuel') {
+    return (Number(record.balance) || 0) !== 0 ||
+      (Array.isArray(record.history) && record.history.length > 0);
+  }
+  return Object.keys(record).length > 0;
+}
+
+function chooseSharedRecord(type, local, cloud) {
+  const localObj = local && typeof local === 'object' ? local : null;
+  const cloudObj = cloud && typeof cloud === 'object' ? cloud : null;
+  if (!localObj && !cloudObj) return null;
+  if (!localObj) return cloudObj;
+  if (!cloudObj) return localObj;
+
+  const lt = Number(localObj.updatedAt) || 0;
+  const ct = Number(cloudObj.updatedAt) || 0;
+  if (lt > ct) return localObj;
+  if (ct > lt) return cloudObj;
+
+  // Legacy records: no timestamp. Prefer the meaningful record over an empty
+  // default record so old data survives the migration.
+  const lm = recordMeaningful(type, localObj);
+  const cm = recordMeaningful(type, cloudObj);
+  if (lm && !cm) return localObj;
+  if (cm && !lm) return cloudObj;
+
+  // If both contain real data but neither has a timestamp, keep local on the
+  // manager/device that already had the record and assign a fresh timestamp.
+  if (lm && cm && lt === 0 && ct === 0) return localObj;
+  return cloudObj;
+}
+
+async function globalFirebaseSync() {
+  if (!CAR_GROUPS) return;
+  var syncPromises = CAR_GROUPS.map(async function(car) {
+    // Fuel: compare timestamps before replacing local data. This prevents an old
+    // Firebase value (for example 0) from overwriting a newer local balance.
+    try {
+      const key = fuelStorageKey(car.id);
+      const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(key) + '.json', { cache: 'no-store' });
+      const cloud = res.ok ? await res.json() : null;
+      const localRaw = localStorage.getItem(key);
+      let local = null;
+      try { local = localRaw ? JSON.parse(localRaw) : null; } catch(e) { local = null; }
+
+      const sharedFuel = cloud || local;
+      if (sharedFuel) {
+        if (!(Number(sharedFuel.updatedAt) > 0)) sharedFuel.updatedAt = Date.now();
+        localStorage.setItem(key, JSON.stringify(sharedFuel));
+        if (!cloud && local) await dbSet(key, sharedFuel);
+      }
+    } catch(e) { console.warn('Fuel sync failed for ' + car.id, e); }
+
+    // Salary: use the same timestamp-safe merge rule as fuel. Never let an older
+    // cloud value (including an old 0) overwrite a newer local salary record.
+    var p2 = (async function() {
+      try {
+        const skey = salaryStorageKey(car.id);
+        const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(skey) + '.json', { cache: 'no-store' });
+        const cloudSalary = res.ok ? await res.json() : null;
+        const localSalaryRaw = localStorage.getItem(skey);
+        let localSalary = null;
+        try { localSalary = localSalaryRaw ? JSON.parse(localSalaryRaw) : null; } catch(e) { localSalary = null; }
+        const sharedSalary = cloudSalary || localSalary;
+        if (sharedSalary) {
+          if (!(Number(sharedSalary.updatedAt) > 0)) sharedSalary.updatedAt = Date.now();
+          localStorage.setItem(skey, JSON.stringify(sharedSalary));
+          if (!cloudSalary && localSalary) await dbSet(skey, sharedSalary);
+        }
+      } catch(e) { console.warn('Salary sync failed for ' + car.id, e); }
+    })();
+    var p3 = fetch(FB_URL + '/tp/' + encodeURIComponent(custodyKey(car.id)) + '.json')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(v) { if (v && v.balance !== undefined) localStorage.setItem(custodyKey(car.id), v.balance.toString()); })
+      .catch(function() {});
+    await Promise.all([p2, p3]);
+  });
+  await Promise.all(syncPromises);
+  if (window._listeners) {
+    for (const [key, cb] of Object.entries(window._listeners)) {
+      const raw = localStorage.getItem(key);
+      if (raw) { try { cb(JSON.parse(raw)); } catch(e) {} }
+    }
+  }
+}
+
+setTimeout(function() {
+  globalFirebaseSync();
+  setInterval(globalFirebaseSync, 10000);
+}, 2000);
+
+function startPolling(screenName, refreshFn) {}
+function stopPolling() {
+  window._listeners = {};
+  if (window._fuelRefreshTimer) { clearInterval(window._fuelRefreshTimer); window._fuelRefreshTimer = null; }
+}
+
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+function currentMonthKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1);
+}
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+function fmtMoney(n) {
+  return (n || 0).toLocaleString('ar-EG') + ' جنيه';
+}
+
+/* ================= Fuel & Salary Management ================= */
+function fuelStorageKey(carId) { return 'tp_fuel_' + carId; }
+function salaryStorageKey(carId) { return 'tp_salary_' + carId; }
+
+async function getFuelData(carId) {
+  const key = fuelStorageKey(carId);
+  let cloud = null;
+  let local = null;
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) local = JSON.parse(raw);
+  } catch(e) { local = null; }
+
+  try {
+    const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(key) + '.json', { cache: 'no-store' });
+    if (res.ok) cloud = await res.json();
+  } catch(e) {}
+
+  // Firebase is the shared source of truth. Local is only a fallback when the cloud record is unavailable.
+  let data = cloud ? cloud : local;
+  if (!data) data = { balance: 0, month: currentMonthKey(), history: [], updatedAt: 0 };
+  if (!(Number(data.updatedAt) > 0)) data.updatedAt = Date.now();
+
+  if (!Array.isArray(data.history)) data.history = [];
+  if (typeof data.balance !== 'number') data.balance = parseFloat(data.balance) || 0;
+  if (data.month !== currentMonthKey()) {
+    data.history.unshift({ type: 'ترحيل الرصيد للشهر الجديد', amount: 0, note: '-', date: todayStr() });
+    data.month = currentMonthKey();
+    data.updatedAt = Date.now();
+  }
+  localStorage.setItem(key, JSON.stringify(data));
+  // One-time migration: if the selected record is local/legacy, publish it.
+  // Migrate local data only when Firebase has no record. Never overwrite an existing cloud record with stale local data.
+  if (data && !cloud && local) {
+    await dbSet(key, data);
+  }
+  return data;
+}
+async function saveFuelData(carId, data) {
+  data.updatedAt = Date.now();
+  localStorage.setItem(fuelStorageKey(carId), JSON.stringify(data));
+  await dbSet(fuelStorageKey(carId), data);
+}
+function pushFuelHistory(data, entry) {
+  data.history.unshift(entry);
+  if (data.history.length > 20) data.history = data.history.slice(0, 20);
+}
+async function addFuelBalance(carId, amount, note) {
+  const data = await getFuelData(carId);
+  data.balance += amount;
+  pushFuelHistory(data, { type: 'إضافة رصيد', amount: amount, note: note || '-', date: todayStr() });
+  await saveFuelData(carId, data);
+  return data;
+}
+async function addFuelFillUp(carId, amount, note) {
+  const data = await getFuelData(carId);
+  data.balance -= amount;
+  pushFuelHistory(data, { type: 'تعبئة بنزين', amount: -amount, note: note || '-', date: todayStr() });
+  await saveFuelData(carId, data);
+  return data;
+}
+
+function renderFuelHistoryList(listEl, history, options = {}) {
+  listEl.innerHTML = '';
+  const editable = !!options.editable;
+  const carId = options.carId || null;
+  history.slice(0, 8).forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    const amtClass = item.amount >= 0 ? 'positive' : 'negative';
+    const amtSign = item.amount > 0 ? '+' : '';
+    const noteText = item.note && item.note !== '-' ? ' (' + item.note + ')' : '';
+    const amountHtml = editable && carId
+      ? `<button type="button" class="h-amount ${amtClass}" title="اضغط لتعديل الرقم" style="background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;font:inherit;color:inherit;text-align:right;">${amtSign}${item.amount} جنيه<small style="display:block;color:#d6aa24;font-size:10px;font-weight:normal;">🔐 تعديل</small></button>`
+      : `<span class="h-amount ${amtClass}">${amtSign}${item.amount} جنيه</span>`;
+    div.innerHTML = `<span>${item.date} - ${item.type}${noteText}</span>${amountHtml}`;
+    if (editable && carId) {
+      const amountEl = div.querySelector('.h-amount');
+      amountEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.editManagerFuelHistoryAmount(carId, index);
+      });
+    }
+    listEl.appendChild(div);
+  });
+}
+
+async function renderFuelScreen() {
+  if (activeCarIndex === null || !CAR_GROUPS[activeCarIndex]) { alert('من فضلك سجل دخول العربية أولاً'); return; }
+  const car = CAR_GROUPS[activeCarIndex];
+  document.getElementById('fuelCarLabel').textContent = car.name;
+  const data = await getFuelData(car.id);
+  renderFuelBalanceUI(data);
+  dbListen(fuelStorageKey(car.id), function(val) {
+    if (val) renderFuelBalanceUI(val);
+  });
+  if (window._fuelRefreshTimer) clearInterval(window._fuelRefreshTimer);
+  window._fuelRefreshTimer = setInterval(refreshFuelFromCloud, 3000);
+}
+function renderFuelBalanceUI(data) {
+  document.getElementById('fuelBalanceValue').textContent = fmtMoney(data.balance);
+  document.getElementById('fuelWarningBanner').style.display = data.balance < 1000 ? 'block' : 'none';
+  renderFuelHistoryList(document.getElementById('fuelHistoryList'), data.history);
+}
+
+async function refreshFuelFromCloud() {
+  if (activeCarIndex === null || !CAR_GROUPS[activeCarIndex]) return;
+  try {
+    const car = CAR_GROUPS[activeCarIndex];
+    const key = fuelStorageKey(car.id);
+    const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(key) + '.json?ts=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const cloud = await res.json();
+    if (!cloud) return;
+    localStorage.setItem(key, JSON.stringify(cloud));
+    renderFuelBalanceUI(cloud);
+  } catch(e) {}
+}
+async function recordFuelFillUp() {
+  if (activeCarIndex === null || !CAR_GROUPS[activeCarIndex]) { alert('من فضلك سجل دخول العربية أولاً'); return; }
+  const car = CAR_GROUPS[activeCarIndex];
+  const amount = parseFloat(document.getElementById('fuelFillAmount').value);
+  const note = document.getElementById('fuelFillNote').value.trim();
+  if (!amount || amount <= 0) {
+    alert('من فضلك اكتب مبلغ صحيح أكبر من صفر');
+    return;
+  }
+  const data = await addFuelFillUp(car.id, amount, note);
+  renderFuelBalanceUI(data);
+  document.getElementById('fuelFillAmount').value = '';
+  document.getElementById('fuelFillNote').value = '';
+  alert('تم تسجيل التعبئة وخصم ' + amount + ' جنيه من الرصيد');
+}
+
+async function managerAddFuelBalance() {
+  const idx = document.getElementById('managerFuelCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  const amount = parseFloat(document.getElementById('managerFuelAddAmount').value);
+  const note = document.getElementById('managerFuelAddNote').value.trim();
+  if (!amount || amount <= 0) { alert('من فضلك اكتب مبلغ صحيح أكبر من صفر'); return; }
+  const car = CAR_GROUPS[idx];
+  await addFuelBalance(car.id, amount, note);
+  document.getElementById('managerFuelAddAmount').value = '';
+  document.getElementById('managerFuelAddNote').value = '';
+  await renderManagerFuelPanel();
+  alert('تم إضافة ' + fmtMoney(amount) + ' لرصيد الوقود');
+}
+
+async function renderManagerFuelPanel() {
+  const idx = document.getElementById('managerFuelCar').value;
+  if (idx === '') {
+    document.getElementById('managerFuelBalanceDisplay').textContent = '-';
+    document.getElementById('managerFuelHistoryList').innerHTML = '';
+    return;
+  }
+  const car = CAR_GROUPS[idx];
+  const data = await getFuelData(car.id);
+  document.getElementById('managerFuelBalanceDisplay').textContent = fmtMoney(data.balance);
+  renderFuelHistoryList(document.getElementById('managerFuelHistoryList'), data.history, { editable: true, carId: car.id });
+}
+
+window.editManagerFuelHistoryAmount = async function editManagerFuelHistoryAmount(carId, historyIndex) {
+  if (!(await window.requireManagerEditCode())) return;
+  const data = await getFuelData(carId);
+  if (!data.history || !data.history[historyIndex]) { alert('❌ العملية غير موجودة'); return; }
+  const item = data.history[historyIndex];
+  const current = Number(item.amount) || 0;
+  const raw = await window.requestManagerNumberEdit('⛽ تعديل مبلغ العملية', current, { message: (item.type || 'عملية وقود') + ' — اكتب الرقم الصحيح الجديد:', min: 0 });
+  if (raw === null) return;
+  const value = parseFloat(String(raw).replace(/,/g, ''));
+  if (!Number.isFinite(value)) { alert('❌ اكتب رقم صحيح'); return; }
+  const diff = value - current;
+  item.amount = value;
+  data.balance = (Number(data.balance) || 0) + diff;
+  await saveFuelData(carId, data);
+  await renderManagerFuelPanel();
+  alert('✅ تم تعديل العملية وتحديث رصيد الوقود تلقائياً');
+}
+
+/* Salary computations */
+function sumEntries(arr) { return (arr || []).reduce((s, x) => s + (parseFloat(x.amount) || 0), 0); }
+function computeNetSalary(d) {
+  const base = parseFloat(d.baseSalary) || 0;
+  const extra = sumEntries(d.extra);
+  const ded = sumEntries(d.deductions);
+  return base + extra - ded;
+}
+
+async function getSalaryData(carId) {
+  const key = salaryStorageKey(carId);
+  let cloud = null, local = null;
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) local = JSON.parse(raw);
+  } catch(e) { local = null; }
+  try {
+    const res = await fetch(FB_URL + '/tp/' + encodeURIComponent(key) + '.json', { cache: 'no-store' });
+    if (res.ok) cloud = await res.json();
+  } catch(e) {}
+
+  // Firebase is the shared source of truth for salary. Local is only a fallback when the cloud record is unavailable.
+  let data = cloud ? cloud : local;
+  if (!data) data = { month: currentMonthKey(), baseSalary: 0, extra: [], deductions: [], updatedAt: 0 };
+  if (!(Number(data.updatedAt) > 0)) data.updatedAt = Date.now();
+
+  if (!Array.isArray(data.extra)) data.extra = [];
+  if (!Array.isArray(data.deductions)) data.deductions = [];
+  if (typeof data.baseSalary !== 'number') data.baseSalary = parseFloat(data.baseSalary) || 0;
+  if (!data.month) data.month = currentMonthKey();
+  localStorage.setItem(key, JSON.stringify(data));
+  // One-time migration of legacy salary records that had no timestamp.
+  // Migrate local data only when Firebase has no salary record.
+  if (data && !cloud && local) {
+    await dbSet(key, data);
+  }
+  return data;
+}
+async function saveSalaryData(carId, data) {
+  data.updatedAt = Date.now();
+  localStorage.setItem(salaryStorageKey(carId), JSON.stringify(data));
+  return await dbSet(salaryStorageKey(carId), data);
+}
+
+function renderManagerSalaryHistoryList(listEl, data, carId) {
+  listEl.innerHTML = '';
+  const entries = [];
+  (data.extra || []).forEach((item, i) => entries.push({ kind: 'extra', index: i, item, label: 'إضافي / سهرة', amount: Number(item.amount) || 0 }));
+  (data.deductions || []).forEach((item, i) => entries.push({ kind: 'deduction', index: i, item, label: 'خصم', amount: Number(item.amount) || 0 }));
+  entries.sort((a,b) => String(b.item.date || '').localeCompare(String(a.item.date || '')));
+  entries.slice(0, 12).forEach(entry => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    const cls = entry.kind === 'extra' ? 'positive' : 'negative';
+    const sign = entry.kind === 'extra' ? '+' : '-';
+    const note = entry.item.note && entry.item.note !== '-' ? ' (' + entry.item.note + ')' : '';
+    div.innerHTML = `<span>${entry.item.date || '-'} - ${entry.label}${note}</span><button type="button" class="h-amount ${cls}" title="اضغط لتعديل الرقم" style="background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;font:inherit;color:inherit;text-align:right;">${sign}${entry.amount} جنيه<small style="display:block;color:#d6aa24;font-size:10px;font-weight:normal;">🔐 تعديل</small></button>`;
+    div.querySelector('.h-amount').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.editManagerSalaryHistoryAmount(carId, entry.kind, entry.index);
+    });
+    listEl.appendChild(div);
+  });
+  if (!entries.length) listEl.innerHTML = '<div style="color:#8f7a52;text-align:center;padding:10px;">لا توجد عمليات راتب</div>';
+}
+
+window.editManagerSalaryHistoryAmount = async function editManagerSalaryHistoryAmount(carId, kind, index) {
+  if (!(await window.requireManagerEditCode())) return;
+  const data = await getSalaryData(carId);
+  const arr = kind === 'extra' ? data.extra : data.deductions;
+  if (!arr || !arr[index]) { alert('❌ العملية غير موجودة'); return; }
+  const item = arr[index];
+  const current = Number(item.amount) || 0;
+  const raw = await window.requestManagerNumberEdit('✏️ تعديل مبلغ العملية', current, { message: (kind === 'extra' ? 'إضافي / سهرة' : 'خصم') + ' — اكتب الرقم الصحيح الجديد:', min: 0 });
+  if (raw === null) return;
+  const value = parseFloat(String(raw).replace(/,/g, ''));
+  if (!Number.isFinite(value) || value < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+  item.amount = value;
+  await saveSalaryData(carId, data);
+  await renderManagerSalaryPanel();
+  alert('✅ تم تعديل العملية وتحديث الراتب تلقائياً');
+}
+
+async function renderManagerSalaryPanel() {
+  const idx = document.getElementById('managerSalaryCar').value;
+  if (idx === '') {
+    ['managerSalaryBaseValue','managerSalaryExtraValue','managerSalaryDeductionsValue','managerSalaryNetValue']
+      .forEach(id => document.getElementById(id).textContent = '0 جنيه');
+    document.getElementById('managerBaseSalaryInput').value = '';
+    document.getElementById('managerSalaryHistoryList').innerHTML = '';
+    return;
+  }
+  const car = CAR_GROUPS[idx];
+  const data = await getSalaryData(car.id);
+  document.getElementById('managerSalaryBaseValue').textContent = fmtMoney(data.baseSalary);
+  document.getElementById('managerSalaryExtraValue').textContent = fmtMoney(sumEntries(data.extra));
+  document.getElementById('managerSalaryDeductionsValue').textContent = fmtMoney(sumEntries(data.deductions));
+  document.getElementById('managerSalaryNetValue').textContent = fmtMoney(computeNetSalary(data));
+  document.getElementById('managerBaseSalaryInput').value = data.baseSalary || '';
+  renderManagerSalaryHistoryList(document.getElementById('managerSalaryHistoryList'), data, car.id);
+}
+
+async function managerSetBaseSalary() {
+  const idx = document.getElementById('managerSalaryCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  const amount = parseFloat(document.getElementById('managerBaseSalaryInput').value);
+  if (isNaN(amount) || amount < 0) { alert('من فضلك اكتب مرتب أساسي صحيح'); return; }
+  const car = CAR_GROUPS[idx];
+  const data = await getSalaryData(car.id);
+  data.baseSalary = amount;
+  await saveSalaryData(car.id, data);
+  await renderManagerSalaryPanel();
+  alert('تم حفظ المرتب الأساسي');
+}
+
+async function managerAddSalaryExtra() {
+  const idx = document.getElementById('managerSalaryCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  const amount = parseFloat(document.getElementById('managerExtraAmount').value);
+  const note = document.getElementById('managerExtraNote').value.trim() || '-';
+  if (!amount || amount <= 0) { alert('من فضلك اكتب مبلغ صحيح أكبر من صفر'); return; }
+  const car = CAR_GROUPS[idx];
+  const data = await getSalaryData(car.id);
+  data.extra.push({ amount, note, date: todayStr() });
+  await saveSalaryData(car.id, data);
+  document.getElementById('managerExtraAmount').value = '';
+  document.getElementById('managerExtraNote').value = '';
+  renderManagerSalaryPanel();
+}
+
+async function managerAddSalaryDeduction() {
+  const idx = document.getElementById('managerSalaryCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  const amount = parseFloat(document.getElementById('managerDeductionAmount').value);
+  const note = document.getElementById('managerDeductionNote').value.trim() || '-';
+  if (!amount || amount <= 0) { alert('من فضلك اكتب مبلغ صحيح أكبر من صفر'); return; }
+  const car = CAR_GROUPS[idx];
+  const data = await getSalaryData(car.id);
+  data.deductions.push({ amount, note, date: todayStr() });
+  await saveSalaryData(car.id, data);
+  document.getElementById('managerDeductionAmount').value = '';
+  document.getElementById('managerDeductionNote').value = '';
+  renderManagerSalaryPanel();
+}
+
+/* ================= Manager manual correction / edit ================= */
+window.requireManagerEditCode = function requireManagerEditCode() {
+  return new Promise(function(resolve) {
+    const modal = document.getElementById('managerEditModal');
+    const input = document.getElementById('managerEditCodeInput');
+    const error = document.getElementById('managerEditError');
+    const ok = document.getElementById('managerEditConfirmBtn');
+    const cancel = document.getElementById('managerEditCancelBtn');
+    if (!modal || !input || !error || !ok || !cancel) {
+      // Fallback for very old cached markup.
+      const code = window.prompt('🔐 أدخل كود المدير لتعديل الرقم:');
+      resolve(code !== null && String(code).trim() === MANAGER_CODE);
+      return;
+    }
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    input.value = '';
+    error.style.display = 'none';
+    setTimeout(function(){ input.focus(); }, 30);
+
+    let finished = false;
+    function close(result) {
+      if (finished) return;
+      finished = true;
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      input.value = '';
+      ok.removeEventListener('click', onOk);
+      cancel.removeEventListener('click', onCancel);
+      input.removeEventListener('keydown', onKey);
+      resolve(result);
+    }
+    function onOk() {
+      const code = String(input.value || '').trim();
+      if (code === MANAGER_CODE) { close(true); }
+      else { error.style.display = 'block'; input.select(); }
+    }
+    function onCancel() { close(false); }
+    function onKey(e) {
+      if (e.key === 'Enter') { e.preventDefault(); onOk(); }
+      if (e.key === 'Escape') { e.preventDefault(); onCancel(); }
+    }
+    ok.addEventListener('click', onOk);
+    cancel.addEventListener('click', onCancel);
+    input.addEventListener('keydown', onKey);
+  });
+};
+
+
+window.requestManagerNumberEdit = function requestManagerNumberEdit(title, current, options) {
+  options = options || {};
+  return new Promise(function(resolve) {
+    const modal = document.getElementById('managerValueModal');
+    const titleEl = document.getElementById('managerValueModalTitle');
+    const textEl = document.getElementById('managerValueModalText');
+    const input = document.getElementById('managerValueInput');
+    const error = document.getElementById('managerValueError');
+    const ok = document.getElementById('managerValueConfirmBtn');
+    const cancel = document.getElementById('managerValueCancelBtn');
+    if (!modal || !titleEl || !textEl || !input || !error || !ok || !cancel) { resolve(null); return; }
+    titleEl.textContent = title || '✏️ تعديل الرقم';
+    textEl.textContent = options.message || ('القيمة الحالية: ' + current + ' جنيه');
+    input.value = String(current);
+    input.min = options.min !== undefined ? String(options.min) : '0';
+    input.step = options.step !== undefined ? String(options.step) : '0.01';
+    error.style.display = 'none';
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    let finished = false;
+    function close(result) {
+      if (finished) return;
+      finished = true;
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      input.value = '';
+      ok.removeEventListener('click', onOk);
+      cancel.removeEventListener('click', onCancel);
+      input.removeEventListener('keydown', onKey);
+      resolve(result);
+    }
+    function onOk() {
+      const raw = String(input.value || '').trim();
+      const value = Number(raw);
+      const min = options.min !== undefined ? Number(options.min) : 0;
+      if (raw === '' || !Number.isFinite(value) || value < min) {
+        error.textContent = options.error || ('❌ اكتب رقم صحيح أكبر من أو يساوي ' + min);
+        error.style.display = 'block';
+        input.focus(); input.select(); return;
+      }
+      close(value);
+    }
+    function onCancel() { close(null); }
+    function onKey(e) {
+      if (e.key === 'Enter') { e.preventDefault(); onOk(); }
+      if (e.key === 'Escape') { e.preventDefault(); onCancel(); }
+    }
+    ok.addEventListener('click', onOk);
+    cancel.addEventListener('click', onCancel);
+    input.addEventListener('keydown', onKey);
+    setTimeout(function(){ input.focus(); input.select(); }, 50);
+  });
+};
+
+window.editManagerFuelBalance = async function editManagerFuelBalance() {
+  const idx = document.getElementById('managerFuelCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  if (!(await window.requireManagerEditCode())) return;
+  const car = CAR_GROUPS[idx];
+  const data = await getFuelData(car.id);
+  const current = Number(data.balance) || 0;
+  const raw = await window.requestManagerNumberEdit('⛽ تعديل رصيد الوقود', current, { message: 'العربية: ' + car.name + ' — اكتب الرصيد الصحيح الجديد:' });
+  if (raw === null) return;
+  const newBalance = parseFloat(String(raw).replace(/,/g, ''));
+  if (!Number.isFinite(newBalance) || newBalance < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+  const diff = newBalance - current;
+  data.balance = newBalance;
+  if (diff !== 0) {
+    pushFuelHistory(data, { type: 'تصحيح رصيد الوقود', amount: diff, note: 'تعديل يدوي من المدير', date: todayStr() });
+  }
+  await saveFuelData(car.id, data);
+  await renderManagerFuelPanel();
+  alert('✅ تم تعديل رصيد الوقود إلى ' + fmtMoney(newBalance));
+}
+
+window.editManagerSalaryField = async function editManagerSalaryField(field) {
+  const idx = document.getElementById('managerSalaryCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  if (!(await window.requireManagerEditCode())) return;
+  const car = CAR_GROUPS[idx];
+  const data = await getSalaryData(car.id);
+
+  if (field === 'base') {
+    const current = Number(data.baseSalary) || 0;
+    const raw = await window.requestManagerNumberEdit('💰 تعديل المرتب الأساسي', current, { message: 'العربية: ' + car.name + ' — اكتب القيمة الصحيحة الجديدة:' });
+    if (raw === null) return;
+    const value = parseFloat(String(raw).replace(/,/g, ''));
+    if (!Number.isFinite(value) || value < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+    data.baseSalary = value;
+  } else if (field === 'extra') {
+    const current = sumEntries(data.extra);
+    const raw = await window.requestManagerNumberEdit('➕ تعديل إجمالي الإضافي والسهرات', current, { message: 'العربية: ' + car.name + ' — اكتب الإجمالي الصحيح الجديد. سيتم تسجيل الفرق كتسوية.' });
+    if (raw === null) return;
+    const value = parseFloat(String(raw).replace(/,/g, ''));
+    if (!Number.isFinite(value) || value < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+    const diff = value - current;
+    if (diff !== 0) data.extra.push({ amount: diff, note: 'تسوية يدوية من المدير', date: todayStr() });
+  } else if (field === 'deductions') {
+    const current = sumEntries(data.deductions);
+    const raw = await window.requestManagerNumberEdit('➖ تعديل إجمالي الخصومات', current, { message: 'العربية: ' + car.name + ' — اكتب الإجمالي الصحيح الجديد. سيتم تسجيل الفرق كتسوية.' });
+    if (raw === null) return;
+    const value = parseFloat(String(raw).replace(/,/g, ''));
+    if (!Number.isFinite(value) || value < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+    const diff = value - current;
+    if (diff !== 0) data.deductions.push({ amount: diff, note: 'تسوية يدوية من المدير', date: todayStr() });
+  } else if (field === 'net') {
+    const current = computeNetSalary(data);
+    const raw = await window.requestManagerNumberEdit('💵 تعديل صافي الراتب', current, { message: 'العربية: ' + car.name + ' — اكتب صافي الراتب الصحيح الجديد. سيتم تسجيل الفرق كتسوية.' });
+    if (raw === null) return;
+    const value = parseFloat(String(raw).replace(/,/g, ''));
+    if (!Number.isFinite(value) || value < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+    const diff = value - current;
+    if (diff > 0) data.extra.push({ amount: diff, note: 'تسوية صافي الراتب من المدير', date: todayStr() });
+    if (diff < 0) data.deductions.push({ amount: -diff, note: 'تسوية صافي الراتب من المدير', date: todayStr() });
+  }
+
+  await saveSalaryData(car.id, data);
+  await renderManagerSalaryPanel();
+  alert('✅ تم تعديل بيانات الراتب بنجاح');
+}
+
+window.editManagerCustodyBalance = async function editManagerCustodyBalance() {
+  const idx = document.getElementById('managerCustodyCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  await editManagerCustodyBalanceByIndex(idx);
+}
+
+async function editManagerCustodyBalanceByIndex(idx) {
+  if (!(await window.requireManagerEditCode())) return;
+  const car = CAR_GROUPS[idx];
+  const current = await getCustodyBalanceAsync(car.id);
+  const raw = await window.requestManagerNumberEdit('💼 تعديل رصيد العهدة', current, { message: 'العربية: ' + car.name + ' — اكتب الرصيد الصحيح الجديد:' });
+  if (raw === null) return;
+  const value = parseFloat(String(raw).replace(/,/g, ''));
+  if (!Number.isFinite(value) || value < 0) { alert('❌ اكتب رقم صحيح أكبر من أو يساوي صفر'); return; }
+  await setCustodyBalance(car.id, value);
+  if (String(document.getElementById('managerCustodyCar').value) === String(idx)) {
+    document.getElementById('managerCustodyAmount').value = '';
+  }
+  await renderManagerCustodyPanel();
+  alert('✅ تم تعديل رصيد العهدة لـ ' + car.name + ' إلى ' + fmtMoney(value));
+}
+
+async function renderManagerCustodyPanel() {
+  const idx = document.getElementById('managerCustodyCar').value;
+  if (idx !== '') {
+    const car = CAR_GROUPS[idx];
+    const bal = await getCustodyBalanceAsync(car.id);
+    const disp = document.getElementById('managerCustodyDisplay');
+    disp.textContent = fmtMoney(bal);
+    disp.style.color = bal < 200 ? '#e74c3c' : '#2ecc71';
+  }
+  const allDiv = document.getElementById('managerCustodyAllCars');
+  allDiv.innerHTML = '<div style="color:#a89060;font-size:13px;text-align:center;">جاري التحميل...</div>';
+  const promises = CAR_GROUPS.map(car => getCustodyBalanceAsync(car.id));
+  const balances = await Promise.all(promises);
+  allDiv.innerHTML = '';
+  CAR_GROUPS.forEach((car, i) => {
+    const bal = balances[i];
+    const item = document.createElement('div');
+    item.className = 'history-item manager-editable-number';
+    item.title = 'اضغط لتعديل رصيد العهدة';
+    item.style.cursor = 'pointer';
+    item.onclick = function() { editManagerCustodyBalanceByIndex(i); };
+    item.innerHTML = `
+      <span style="font-weight:bold;color:#d4af37;">${car.name}</span>
+      <span style="color:${bal < 200 ? '#e8a0a0' : '#8ed08e'};font-weight:bold;">${fmtMoney(bal)}<small style="display:block;color:#8f7a52;font-weight:normal;font-size:10px;">اضغط للتعديل 🔐</small></span>
+    `;
+    allDiv.appendChild(item);
+  });
+}
+
+async function managerSetCustody() {
+  const idx = document.getElementById('managerCustodyCar').value;
+  if (idx === '') { alert('من فضلك اختر العربية أولاً'); return; }
+  const amount = parseFloat(document.getElementById('managerCustodyAmount').value);
+  if (isNaN(amount) || amount < 0) { alert('من فضلك اكتب مبلغ صحيح'); return; }
+  const car = CAR_GROUPS[idx];
+  setCustodyBalance(car.id, amount);
+  document.getElementById('managerCustodyAmount').value = '';
+  document.getElementById('managerCustodyNote').value = '';
+  await renderManagerCustodyPanel();
+  alert('✅ تم تحديد رصيد العهدة لـ ' + car.name + ' إلى ' + fmtMoney(amount));
+}
+
+async function renderSalaryScreen() {
+  if (activeCarIndex === null || !CAR_GROUPS[activeCarIndex]) { alert('من فضلك سجل دخول العربية أولاً'); return; }
+  const car = CAR_GROUPS[activeCarIndex];
+  document.getElementById('salaryCarLabel').textContent = car.name;
+  const data = await getSalaryData(car.id);
+  function updateSalaryUI(d) {
+    document.getElementById('salaryBaseValue').textContent = fmtMoney(d.baseSalary);
+    document.getElementById('salaryExtraValue').textContent = fmtMoney(sumEntries(d.extra || []));
+    document.getElementById('salaryDeductionsValue').textContent = fmtMoney(sumEntries(d.deductions || []));
+    document.getElementById('salaryNetValue').textContent = fmtMoney(computeNetSalary(d));
+  }
+  updateSalaryUI(data);
+  dbListen(salaryStorageKey(car.id), function(val) {
+    if (val) updateSalaryUI(val);
+  });
+}
+
+function buildSalaryWorkbook(carName, data) {
+  const wsData = [
+    [`تقرير راتب السائق - ${carName}`],
+    [`الشهر: ${data.month}`],
+    [],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  const wb = XLSX.utils.book_new();
+  wb.Workbook = { Views: [{ RTL: true }] };
+  XLSX.utils.book_append_sheet(wb, ws, 'الراتب');
+  return wb;
+}
+
+async function downloadSalarySheet() {
+  if (activeCarIndex === null) {
+    alert('حدث خطأ في تحديد العربية، من فضلك رجع للشاشة الرئيسية وسجل دخولك تاني');
+    return;
+  }
+  const car = CAR_GROUPS[activeCarIndex];
+  const data = await getSalaryData(car.id);
+  try {
+    const wb = buildSalaryWorkbook(car.name, data);
+    const fileName = 'راتب_' + car.name.replace(/\s+/g, '_') + '_' + data.month + '.xlsx';
+    XLSX.writeFile(wb, fileName);
+    alert('✅ تم تحميل بيانات الراتب بنجاح باسم:\n"' + fileName + '"');
+  } catch (e) {
+    alert('حصل خطأ في إنشاء ملف الإكسيل، تأكد من اتصالك بالإنترنت وحاول تاني');
+  }
+}
+</script>
+
+<!-- ===== Manager Edit Value Modal ===== -->
+<div id="managerValueModal" aria-hidden="true" style="display:none;position:fixed;inset:0;z-index:10001;align-items:center;justify-content:center;background:rgba(0,0,0,.72);padding:20px;">
+  <div class="manager-modal-box" role="dialog" aria-modal="true" aria-labelledby="managerValueModalTitle">
+    <h3 id="managerValueModalTitle">✏️ تعديل الرقم</h3>
+    <p id="managerValueModalText">اكتب الرقم الجديد.</p>
+    <input id="managerValueInput" type="number" inputmode="decimal" step="0.01" autocomplete="off" placeholder="الرقم الجديد">
+    <div id="managerValueError" style="display:none;color:#ff8f8f;font-size:13px;margin-top:8px;">❌ اكتب رقم صحيح</div>
+    <div class="manager-modal-actions">
+      <button id="managerValueCancelBtn" type="button">إلغاء</button>
+      <button id="managerValueConfirmBtn" type="button">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Manager Edit Code Modal ===== -->
+<div id="managerEditModal" aria-hidden="true">
+  <div class="manager-modal-box" role="dialog" aria-modal="true" aria-labelledby="managerEditModalTitle">
+    <h3 id="managerEditModalTitle">🔐 تعديل بيانات المدير</h3>
+    <p>أدخل كود المدير للسماح بتعديل الرقم.</p>
+    <input id="managerEditCodeInput" type="password" inputmode="numeric" autocomplete="off" placeholder="كود المدير">
+    <div id="managerEditError">❌ كود المدير غير صحيح</div>
+    <div class="manager-modal-actions">
+      <button id="managerEditCancelBtn" type="button">إلغاء</button>
+      <button id="managerEditConfirmBtn" type="button">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Manager edit modal boot: make the editable numbers explicitly clickable.
+document.addEventListener('DOMContentLoaded', function(){
+  ['managerFuelBalanceDisplay','managerSalaryBaseValue','managerSalaryExtraValue','managerSalaryDeductionsValue','managerSalaryNetValue','managerCustodyDisplay'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(el) el.style.cursor='pointer';
+  });
+});
+</script>
+</body>
+</html>
