@@ -859,6 +859,7 @@ async function apiLogin(role, car, code) {
 function setSession(res) {
   API_TOKEN = res.token; API_ROLE = res.role; API_CAR = res.car || null;
   applyLinks(res.links);
+  setTimeout(function() { try { globalFirebaseSync(); } catch (e) {} }, 0);
   try { sessionStorage.setItem('tp_session', JSON.stringify({ token: res.token, role: res.role, car: res.car || null, links: res.links, exp: Date.now() + 23 * 3600 * 1000 })); } catch (e) {}
 }
 try { const s = JSON.parse(sessionStorage.getItem('tp_session') || 'null'); if (s && s.links) applyLinks(s.links); } catch (e) {}
@@ -1921,7 +1922,9 @@ async function globalFirebaseSync() {
 
 setTimeout(function() {
   globalFirebaseSync();
-  setInterval(globalFirebaseSync, 10000);
+  // Every 60s, and only while the page is on screen (saves server requests).
+  setInterval(function() { if (!document.hidden) globalFirebaseSync(); }, 60000);
+  document.addEventListener('visibilitychange', function() { if (!document.hidden) globalFirebaseSync(); });
 }, 2000);
 
 function startPolling(screenName, refreshFn) {}
@@ -2041,7 +2044,7 @@ async function renderFuelScreen() {
     if (val) renderFuelBalanceUI(val);
   });
   if (window._fuelRefreshTimer) clearInterval(window._fuelRefreshTimer);
-  window._fuelRefreshTimer = setInterval(refreshFuelFromCloud, 3000);
+  window._fuelRefreshTimer = setInterval(function() { if (!document.hidden) refreshFuelFromCloud(); }, 30000);
 }
 function renderFuelBalanceUI(data) {
   document.getElementById('fuelBalanceValue').textContent = fmtMoney(data.balance);
